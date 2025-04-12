@@ -3,12 +3,12 @@ import { StyleSheet, ActivityIndicator, Image, View as RNView } from 'react-nati
 import { Text, View } from '@/shared/ui/Themed';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import { TextInput, Button } from 'react-native-paper';
-
+import { useUserRole } from '@/shared/context/UserRoleContext';
 const PlaceholderImage = require('@/assets/images/qr-code.png');
 
 export default function QRGenerator() {
   const [text, setText] = useState('https://example.com');
-  
+  const { userRole } = useUserRole();
   // Mock event data
   const [event, setEvent] = useState<{
     id: string;
@@ -21,7 +21,9 @@ export default function QRGenerator() {
 
   return (
     <View style={styles.container}>
+      
       <Text style={styles.title}>Event QR Code</Text>
+      <Text style={styles.title}>Role: {userRole}</Text>
       
       <RNView style={styles.qrcontainer}>
           <Image 

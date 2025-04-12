@@ -17,6 +17,7 @@ import {
   CameraProvider,
   useCameraContext,
 } from '@/shared/providers/camera.provider';
+import { UserRoleProvider } from '@/shared/context/UserRoleContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -25,7 +26,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: 'login',
+  initialRouteName: '(tabs)',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -53,9 +54,11 @@ export default function RootLayout() {
   }
 
   return (
-    <CameraProvider>
-      <RootLayoutNav />
-    </CameraProvider>
+    <UserRoleProvider>
+      <CameraProvider>
+        <RootLayoutNav />
+      </CameraProvider>
+    </UserRoleProvider>
   );
 }
 
