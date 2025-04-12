@@ -1,9 +1,11 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
+import { useColorScheme } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
+export function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
@@ -11,6 +13,8 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const { colors } = useTheme();
+
   const tabs: {
     name: string;
     icon: React.ComponentProps<typeof FontAwesome>['name'];
@@ -25,16 +29,21 @@ export default function TabLayout() {
     },
     {
       name: 'generator',
-      icon: 'qrcode'
+      icon: 'qrcode',
     },
     {
       name: 'events',
       icon: 'calendar',
-    }
+    },
   ];
 
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: 'gray',
+      }}
+    >
       {tabs.map((tab) => {
         const { name, icon } = tab;
 
@@ -44,8 +53,11 @@ export default function TabLayout() {
             name={name}
             options={{
               headerShown: false,
-              tabBarIcon: ({ color }) => (
-                <TabBarIcon name={icon} color={color} />
+              tabBarIcon: ({ focused }) => (
+                <TabBarIcon
+                  name={icon}
+                  color={focused ? colors.primary : 'gray'}
+                />
               ),
             }}
           />

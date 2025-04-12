@@ -26,7 +26,7 @@ const RoleSelectionScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Choose Your Role</Text>
       <Text style={styles.subtitle}>Select how you want to use the application</Text>
-      
+
       <View style={styles.cardsContainer}>
         <TouchableOpacity
           onPress={() => setUserRole('admin')}
@@ -37,7 +37,7 @@ const RoleSelectionScreen = () => {
         >
           <Card style={styles.card}>
             <Card.Content style={styles.cardContent}>
-              <FontAwesome name="user-secret" size={50} color={theme.colors.accent} />
+              <FontAwesome name="user-secret" size={50} color={theme.colors.primary} />
               <Title style={styles.cardTitle}>Admin</Title>
               <Text style={styles.cardText}>
                 Create and manage events, generate QR codes
@@ -55,7 +55,7 @@ const RoleSelectionScreen = () => {
         >
           <Card style={styles.card}>
             <Card.Content style={styles.cardContent}>
-              <FontAwesome name="user" size={50} color={theme.colors.accent} />
+              <FontAwesome name="user" size={50} color={theme.colors.primary} />
               <Title style={styles.cardTitle}>User</Title>
               <Text style={styles.cardText}>
                 Scan QR codes to join and participate in events
