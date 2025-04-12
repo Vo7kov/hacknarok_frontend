@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/shared/ui/Themed';
+import QRCodeGenerator from '@/components/QRCodeGenerator';
 
 export default function QRGenerator() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Tab One</Text>
-
+            <QRCodeGenerator value="" size={200}/>
         </View>
     )
 }
