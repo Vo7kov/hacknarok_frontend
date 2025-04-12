@@ -13,20 +13,19 @@ type Props = {
 export const ARPopup: FC<Props> = ({ data }) => {
   const glRef = useRef(null);
 
-  const parsedData =
-    typeof data === 'object'
-      ? JSON.parse(data)
-      : {
-          id: '1',
-          creator_id: '1',
-          description: 'The best event',
-          registered_users: 100,
-          password: 'cexn trun aghd',
-          name: 'IMPREZA',
-          location: 'Rynek Glowny, Krakow',
-          date: '12.12.2023',
-          max_users: 150,
-        };
+  const parsedData = data.includes('description')
+    ? JSON.parse(data.slice(1, -1))
+    : {
+        id: '1',
+        creator_id: '1',
+        description: 'Biesiada',
+        registered_users: 100,
+        password: 'Przynies, wiecej miodu',
+        name: 'Biesiada',
+        location: 'Valhalla',
+        date: '12.12.1410',
+        max_users: 150,
+      };
 
   const { id, creator_id, registered_users, max_users, ...dataToRender } =
     parsedData;
@@ -34,6 +33,8 @@ export const ARPopup: FC<Props> = ({ data }) => {
   const formattedData = Object.entries(dataToRender)
     .map(([key, value]) => `${key}: ${value}`)
     .join('\n');
+
+  console.log('formattedData', formattedData);
 
   const makeRuneShape = (): THREE.Shape => {
     const shape = new THREE.Shape();
