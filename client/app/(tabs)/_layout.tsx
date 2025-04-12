@@ -32,6 +32,7 @@ export default function TabLayout() {
 
         return (
           <Tabs.Screen
+            key={name}
             name={name}
             options={{
               headerShown: false,
