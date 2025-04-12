@@ -23,6 +23,10 @@ export default function TabLayout() {
       name: 'scanner',
       icon: 'camera',
     },
+    {
+      name: 'generator',
+      icon: 'qrcode'
+    }
   ];
 
   return (
@@ -32,6 +36,7 @@ export default function TabLayout() {
 
         return (
           <Tabs.Screen
+            key={name}
             name={name}
             options={{
               headerShown: false,
