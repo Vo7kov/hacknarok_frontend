@@ -5,7 +5,7 @@ import QRCodeGenerator from '@/components/QRCodeGenerator';
 
 export default function QRGenerator() {
   const [event, setEvent] = useState<{
-    id: number;
+    id: string;
     name: string;
     creator_id: number;
     registered_users: number;
@@ -27,7 +27,7 @@ export default function QRGenerator() {
           data.length > 0 &&
           data[0].id !== undefined
         ) {
-          setEvent(data[0]);
+          setEvent(data[1]);
         } else {
           console.error('Invalid data structure:', data);
         }
