@@ -61,7 +61,7 @@ export default function QRGenerator() {
     <View style={styles.container}>
       <Text style={styles.title}>Event QR Code</Text>
       <View style={styles.qrcontainer}>
-        <QRCodeGenerator value={event.description} size={200} />
+        <QRCodeGenerator value={JSON.stringify(event)} size={200} />
       </View>
       <Text style={styles.description}>{event.description}</Text>
     </View>
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   qrcontainer: {
-    height: 250,
-    width: 250,
+    height: 240,
+    width: 240,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',

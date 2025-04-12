@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, Button, Alert } from 'react-native';
-import { View, Text } from '@/shared/ui/Themed';
+import { StyleSheet, Alert } from 'react-native';
+import { View } from '@/shared/ui/Themed';
 import { useRouter } from 'expo-router';
+import { Button, Card, Text, Divider, TextInput } from 'react-native-paper';
 
 
 export default function LoginScreen() {
