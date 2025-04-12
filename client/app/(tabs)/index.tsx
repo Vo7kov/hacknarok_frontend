@@ -1,8 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/shared/ui/Themed';
+import { FC } from 'react';
 
-export default function TabOneScreen() {
+const TabOneScreen: FC = () => {
   return (
     <View style={styles.container}>
       <Text>text</Text>
@@ -13,7 +14,9 @@ export default function TabOneScreen() {
       />
     </View>
   );
-}
+};
+
+export default TabOneScreen;
 
 const styles = StyleSheet.create({
   container: {

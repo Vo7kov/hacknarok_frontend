@@ -10,7 +10,13 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from 'react-native';
+import { StyleSheet, useColorScheme } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Overlay } from '@/components/Overlay';
+import {
+  CameraProvider,
+  useCameraContext,
+} from '@/shared/providers/camera.provider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -46,11 +52,18 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <CameraProvider>
+      <RootLayoutNav />
+    </CameraProvider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+
+  const [permissions] = useCameraPermissions();
+  const { cameraActive } = useCameraContext();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -58,6 +71,20 @@ function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
+
+      {permissions?.granted && cameraActive && (
+        <>
+          <CameraView
+            style={StyleSheet.absoluteFillObject}
+            facing="back"
+            onBarcodeScanned={({ data }) => {
+              console.log('Barcode scanned:', data);
+            }}
+          />
+
+          <Overlay />
+        </>
+      )}
     </ThemeProvider>
   );
 }
