@@ -26,6 +26,10 @@ export default function TabLayout() {
     {
       name: 'generator',
       icon: 'qrcode'
+    },
+    {
+      name: 'events',
+      icon: 'calendar',
     }
   ];
 

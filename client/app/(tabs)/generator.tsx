@@ -7,9 +7,8 @@ import { useUserRole } from '@/shared/context/UserRoleContext';
 const PlaceholderImage = require('@/assets/images/qr-code.png');
 
 export default function QRGenerator() {
-  const [text, setText] = useState('https://example.com');
+  
   const { userRole } = useUserRole();
-  // Mock event data
   const [event, setEvent] = useState<{
     id: string;
     name: string;
