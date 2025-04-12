@@ -6,7 +6,7 @@ import { FC } from 'react';
 const TabOneScreen: FC = () => {
   return (
     <View style={styles.container}>
-      <Text>text</Text>
+      <Text>TEXT</Text>
       <View
         style={styles.separator}
         lightColor="#eee"
