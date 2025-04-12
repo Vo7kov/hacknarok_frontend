@@ -1,36 +1,127 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, ActivityIndicator, Image, View as RNView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, View as RNView } from 'react-native';
 import { Text, View } from '@/shared/ui/Themed';
-import { Canvas, Path, Skia } from '@shopify/react-native-skia';
-import { TextInput, Button } from 'react-native-paper';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import { useUserRole } from '@/shared/context/UserRoleContext';
-const PlaceholderImage = require('@/assets/images/qr-code.png');
+import QRCode from 'react-native-qrcode-svg';
+
+type Event = {
+  id: number;
+  name: string;
+  description: string;
+  location: string;
+  time: string;
+  max_users: number;
+  registered_users: number;
+  password: string;
+};
 
 export default function QRGenerator() {
-  
   const { userRole } = useUserRole();
-  const [event, setEvent] = useState<{
-    id: string;
-    name: string;
-    creator_id: number;
-    registered_users: number;
-    max_users: number;
-    description: string;
-  } | null>(null);
+
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('http://172.20.10.6:8000/api/event/user/1', {
+          headers: {
+            user_id: '2', // User ID for fetching events
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+
+        const data = await response.json();
+        setEvents(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // Get QR code value from event data
+  const getQRValue = () => {
+    if (selectedEvent) {
+      return JSON.stringify(selectedEvent);
+    }
+    return '';
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      
       <Text style={styles.title}>Event QR Code</Text>
-      <Text style={styles.title}>Role: {userRole}</Text>
       
-      <RNView style={styles.qrcontainer}>
-          <Image 
-            source={PlaceholderImage} 
-            style={styles.qrImage}
-            resizeMode="contain"
-          />
-      </RNView>
+      {selectedEvent ? (
+        <>
+          <RNView style={styles.qrcontainer}>
+            <QRCode 
+              value={getQRValue()}
+              size={200}
+            />
+          </RNView>
+          <Text style={styles.eventName}>{selectedEvent.name}</Text>
+          <Text style={styles.eventDetails}>
+            Location: {selectedEvent.location} • Time: {selectedEvent.time}
+          </Text>
+        </>
+      ) : (
+        <Text style={styles.instructions}>Select an event below to generate its QR code</Text>
+      )}
+      
+      <Text style={styles.sectionTitle}>Your Events</Text>
+      
+      <ScrollView style={styles.eventsList}>
+        {events.length > 0 ? (
+          events.map((event) => (
+            <TouchableOpacity
+              key={event.id}
+              onPress={() => setSelectedEvent(event)}
+              style={[
+                styles.cardWrapper,
+                selectedEvent?.id === event.id && styles.selectedCard
+              ]}
+            >
+              <Card style={styles.card}>
+                <Card.Content>
+                  <Title>{event.name}</Title>
+                  <Paragraph numberOfLines={2}>{event.description}</Paragraph>
+                  <Paragraph>
+                    👥 {event.registered_users}/{event.max_users} participants
+                  </Paragraph>
+                </Card.Content>
+              </Card>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noEvents}>No events found</Text>
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -39,7 +130,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     padding: 20,
   },
   qrcontainer: {
@@ -49,21 +139,69 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
-    marginBottom: 20,
+    marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  qrImage: {
-    width: 200,
-    height: 200,
-  },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
+    paddingBottom: 10,
+    marginTop: 40,
+  },
+  roleText: {
+    fontSize: 16,
     paddingBottom: 20,
+  },
+  instructions: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    opacity: 0.7,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  eventsList: {
+    width: '100%',
+  },
+  cardWrapper: {
+    width: '100%',
+    marginBottom: 10,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  selectedCard: {
+    borderColor: '#2196F3',
+  },
+  card: {
+    width: '100%',
+  },
+  eventName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  eventDetails: {
+    fontSize: 14,
+    opacity: 0.7,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+  },
+  noEvents: {
+    textAlign: 'center',
+    fontSize: 16,
+    opacity: 0.7,
+    marginTop: 20,
   },
   description: {
     marginTop: 20,

@@ -169,7 +169,7 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://172.20.10.6:8000/api/event/user/1', {
+        const response = await fetch('http://172.20.10.6:8000/api/event/user/2', {
           headers: {
             user_id: '2', // User ID for fetching events
           },
