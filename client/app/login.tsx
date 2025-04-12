@@ -51,7 +51,9 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button mode="contained" onPress={handleLogin}>
+        Login
+      </Button>
     </View>
   );
 }
