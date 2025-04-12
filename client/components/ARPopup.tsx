@@ -19,12 +19,12 @@ export const ARPopup: FC<Props> = ({ data }) => {
       : {
           id: '1',
           creator_id: '1',
-          description: 'The best event',
+          description: 'Biesiada',
           registered_users: 100,
-          password: 'cexn trun aghd',
-          name: 'IMPREZA',
-          location: 'Rynek Glowny, Krakow',
-          date: '12.12.2023',
+          password: 'Przynies, wiecej miodu',
+          name: 'Biesiada',
+          location: 'Valhalla',
+          date: '12.12.1410',
           max_users: 150,
         };
 
