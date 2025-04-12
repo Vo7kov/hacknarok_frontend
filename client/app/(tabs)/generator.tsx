@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, ActivityIndicator, Image, View as RNView } from 'react-native';
 import { Text, View } from '@/shared/ui/Themed';
-import QRCodeGenerator from '@/components/QRCodeGenerator';
+import { Canvas, Path, Skia } from '@shopify/react-native-skia';
+import { TextInput, Button } from 'react-native-paper';
+
+const PlaceholderImage = require('@/assets/images/qr-code.png');
 
 export default function QRGenerator() {
+  const [text, setText] = useState('https://example.com');
+  
+  // Mock event data
   const [event, setEvent] = useState<{
     id: string;
     name: string;
@@ -12,58 +18,18 @@ export default function QRGenerator() {
     max_users: number;
     description: string;
   } | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('http://172.20.10.6:8000/api/event/all');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (
-          Array.isArray(data) &&
-          data.length > 0 &&
-          data[0].id !== undefined
-        ) {
-          setEvent(data[1]);
-        } else {
-          console.error('Invalid data structure:', data);
-        }
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  if (!event) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>No Event Found</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Event QR Code</Text>
-      <View style={styles.qrcontainer}>
-        <QRCodeGenerator value={JSON.stringify(event)} size={200} />
-      </View>
-      <Text style={styles.description}>{event.description}</Text>
+      
+      <RNView style={styles.qrcontainer}>
+          <Image 
+            source={PlaceholderImage} 
+            style={styles.qrImage}
+            resizeMode="contain"
+          />
+      </RNView>
     </View>
   );
 }
@@ -73,6 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
   },
   qrcontainer: {
     height: 240,
@@ -81,15 +48,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  qrImage: {
+    width: 200,
+    height: 200,
   },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    paddingBottom: 12,
+    paddingBottom: 20,
   },
   description: {
     marginTop: 20,
     fontSize: 16,
     textAlign: 'center',
+    lineHeight: 24,
   },
+  input: {
+    width: '100%',
+    marginBottom: 15,
+  },
+  button: {
+    width: '100%',
+    paddingVertical: 6,
+  }
 });
