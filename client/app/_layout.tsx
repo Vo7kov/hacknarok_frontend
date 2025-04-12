@@ -18,6 +18,7 @@ import {
   useCameraContext,
 } from '@/shared/providers/camera.provider';
 import { RunesGame } from '@/components/RunesGame';
+import { UserRoleProvider } from '@/shared/context/UserRoleContext';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -48,9 +49,11 @@ export default function RootLayout() {
   }
 
   return (
-    <CameraProvider>
-      <RootLayoutNav />
-    </CameraProvider>
+    <UserRoleProvider>
+      <CameraProvider>
+        <RootLayoutNav />
+      </CameraProvider>
+    </UserRoleProvider>
   );
 }
 

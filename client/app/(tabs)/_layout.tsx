@@ -23,6 +23,10 @@ export default function TabLayout() {
       name: 'scanner',
       icon: 'camera',
     },
+    {
+      name: 'generator',
+      icon: 'qrcode'
+    }
   ];
 
   return (
