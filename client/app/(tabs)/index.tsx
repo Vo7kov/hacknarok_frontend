@@ -5,7 +5,7 @@ import { Text, View } from '@/shared/ui/Themed';
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <Text>text</Text>
       <View
         style={styles.separator}
         lightColor="#eee"

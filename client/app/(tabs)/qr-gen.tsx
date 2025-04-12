@@ -16,8 +16,9 @@ export default function QRGenerator() {
 
     return (
         <View style={styles.container}>
+          <Text style={styles.title}>Event QR Code</Text>
             <View style={styles.qrcontainer}>
-                <QRCodeGenerator value={event.id} size={200}/>
+                <QRCodeGenerator value={event.id} size={200}/> 
             </View>
         </View>
     )
@@ -39,8 +40,9 @@ const styles = StyleSheet.create({
         borderRadius: 25,
     },
     title: {
-      fontSize: 20,
+      fontSize: 30,
       fontWeight: 'bold',
+      paddingBottom: 12,
     },
     separator: {
       marginVertical: 30,
