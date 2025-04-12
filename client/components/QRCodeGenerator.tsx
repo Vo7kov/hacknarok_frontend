@@ -8,7 +8,7 @@ interface QRCodeGeneratorProps {
   size?: number;
 }
 
-const QRCodeGenerator: FC<QRCodeGeneratorProps> = ({ value = "DefaultValue", size = 100 }) => {
+const QRCodeGenerator: FC<QRCodeGeneratorProps> = ({ value = "default", size = 100 }) => {
   // value: The string data you want to encode (e.g., your story ID or URL)
   // size: The width and height of the QR code in pixels
 
