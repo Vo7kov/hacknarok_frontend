@@ -12,7 +12,6 @@ import {
 } from 'react-native-paper';
 import { useUserRole } from '@/shared/context/UserRoleContext';
 import { theme } from '@/shared/hooks/useAppTheme';
-
 import { useFocusEffect } from '@react-navigation/native';
 
 type Event = {
@@ -24,6 +23,8 @@ type Event = {
   max_users: number;
   registered_users: number;
   password: string;
+  aiMessage?: string; // Add optional field for AI message
+  loadingAi?: boolean;
 };
 
 // CreateEvent form component
@@ -46,21 +47,24 @@ const CreateEventForm = () => {
     setSuccess(false);
 
     try {
-      const response = await fetch('http://192.168.107.164:8000/api/event/create?user_id=1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          user_id: '1', 
+      const response = await fetch(
+        'http://172.20.10.6:8000/api/event/create?user_id=1',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            user_id: '1',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            description: formData.description,
+            location: formData.location,
+            time: formData.time,
+            max_users: parseInt(formData.max_users),
+            password: formData.password,
+          }),
         },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          location: formData.location,
-          time: formData.time,
-          max_users: parseInt(formData.max_users),
-          password: formData.password,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to create event');
@@ -168,7 +172,6 @@ const EventList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  
   useFocusEffect(
     React.useCallback(() => {
       let isMounted = true;
@@ -178,11 +181,14 @@ const EventList = () => {
         setError('');
 
         try {
-          const response = await fetch('http://192.168.107.164:8000/api/event/user/2', {
-            headers: {
-              user_id: '2', // User ID for fetching events
+          const response = await fetch(
+            'http://172.20.10.6:8000/api/event/user/2',
+            {
+              headers: {
+                user_id: '2', // User ID for fetching events
+              },
             },
-          });
+          );
 
           if (!response.ok) {
             throw new Error('Failed to fetch events');
@@ -208,8 +214,52 @@ const EventList = () => {
       return () => {
         isMounted = false;
       };
-    }, []) // Empty dependency array ensures this runs only when the screen is focused
+    }, []), // Empty dependency array ensures this runs only when the screen is focused
   );
+
+  const fetchAiMessage = async (eventId: number) => {
+    // Set loading state for the specific card
+    setEvents((currentEvents) =>
+      currentEvents.map((event) =>
+        event.id === eventId
+          ? { ...event, loadingAi: true, aiMessage: undefined }
+          : event,
+      ),
+    );
+
+    try {
+      const response = await fetch(
+        `http://172.20.10.6:8000/api/event/ai/${eventId}`,
+      ); // Ensure correct IP/URL
+      if (!response.ok) {
+        throw new Error('Failed to fetch AI message');
+      }
+      const data = await response.json();
+      const message = data.generated_text; 
+
+      setEvents((currentEvents) =>
+        currentEvents.map((event) =>
+          event.id === eventId
+            ? { ...event, aiMessage: message, loadingAi: false }
+            : event,
+        ),
+      );
+    } catch (err) {
+      console.error('Error fetching AI message:', err);
+      
+      setEvents((currentEvents) =>
+        currentEvents.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                loadingAi: false,
+                aiMessage: 'Error fetching message.',
+              }
+            : event,
+        ),
+      );
+    }
+  };
 
   if (loading) {
     return (
@@ -254,7 +304,23 @@ const EventList = () => {
                 👥 {item.registered_users}/{item.max_users} participants
               </Text>
               <Text>🔒 Password: {item.password}</Text>
+              {item.loadingAi && (
+                <ActivityIndicator size="small" style={{ marginVertical: 5 }} />
+              )}
+              {item.aiMessage && (
+                <Paragraph style={styles.aiMessageText}>
+                  Viking Insight: {item.aiMessage}
+                </Paragraph>
+              )}
             </View>
+            <Button
+              mode="outlined"
+              onPress={() => fetchAiMessage(item.id)}
+              style={styles.aiButton}
+              disabled={item.loadingAi}
+            >
+              {item.loadingAi ? 'Thinking...' : 'Get Viking Insight'}
+            </Button>
           </Card.Content>
         </Card>
       )}
@@ -272,7 +338,6 @@ const EventsScreen = () => {
       </Text>
 
       {userRole === 'admin' ? <CreateEventForm /> : <EventList />}
-
     </View>
   );
 };
@@ -280,6 +345,18 @@ const EventsScreen = () => {
 export default EventsScreen;
 
 const styles = StyleSheet.create({
+  aiButton: {
+    marginTop: 10,
+    borderColor: theme.colors.primary,
+  },
+  aiMessageText: {
+    marginTop: 8,
+    fontStyle: 'italic',
+    color: theme.colors.primary, 
+    backgroundColor: '#e8eaf6', 
+    padding: 8,
+    borderRadius: 4,
+  },
   container: {
     flex: 1,
     padding: 16,
