@@ -21,7 +21,6 @@ type Event = {
   registered_users: number;
   password: string;
 };
-import { theme } from '@/shared/hooks/useAppTheme';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function QRGenerator() {
@@ -45,7 +44,7 @@ export default function QRGenerator() {
             `http://${process.env.EXPO_PUBLIC_API_URL}/api/event/user/1`,
             {
               headers: {
-                user_id: '2', // User ID for fetching events
+                user_id: '2', 
               },
             },
           );
@@ -57,7 +56,7 @@ export default function QRGenerator() {
           const data = await response.json();
           if (isMounted) {
             setEvents(data);
-            // Keep selected event if it still exists in fetched data
+            
             if (selectedEvent) {
               const stillExists: Event | undefined = data.find(
                 (e: Event) => e.id === selectedEvent.id,
@@ -80,11 +79,11 @@ export default function QRGenerator() {
 
       fetchEvents();
 
-      // Cleanup function
+      
       return () => {
         isMounted = false;
       };
-    }, [selectedEvent]), // Include selectedEvent to properly handle updates
+    }, [selectedEvent]), 
   );
 
   const deleteEvent = async (eventId: number) => {
@@ -103,12 +102,12 @@ export default function QRGenerator() {
         throw new Error('Failed to delete event');
       }
 
-      // Remove the deleted event from the state
+      
       setEvents((prevEvents) =>
         prevEvents.filter((event) => event.id !== eventId),
       );
       if (selectedEvent?.id === eventId) {
-        setSelectedEvent(null); // Deselect the event if it was selected
+        setSelectedEvent(null); 
       }
     } catch (err) {
       console.error('Error deleting event:', err);
@@ -116,7 +115,7 @@ export default function QRGenerator() {
     }
   };
 
-  // Get QR code value from event data
+  
   const getQRValue = () => {
     if (selectedEvent) {
       return JSON.stringify(selectedEvent);
