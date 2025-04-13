@@ -14,7 +14,7 @@ export const ARPopup: FC<Props> = ({ data }) => {
   const glRef = useRef(null);
 
   const parsedData = data.includes('description')
-    ? JSON.parse(data.slice(1, -1))
+    ? JSON.parse(data)
     : {
         id: '1',
         creator_id: '1',

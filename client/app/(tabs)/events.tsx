@@ -253,6 +253,7 @@ const EventList = () => {
               <Text>
                 👥 {item.registered_users}/{item.max_users} participants
               </Text>
+              <Text>🔒 Password: {item.password}</Text>
             </View>
           </Card.Content>
         </Card>

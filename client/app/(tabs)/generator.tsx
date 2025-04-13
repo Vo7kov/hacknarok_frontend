@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, View as RNView } from 'react-native';
+import {
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View as RNView,
+} from 'react-native';
 import { Text, View } from '@/shared/ui/Themed';
-import { Card, Title, Paragraph } from 'react-native-paper';
+import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { useUserRole } from '@/shared/context/UserRoleContext';
-import QRCode from 'react-native-qrcode-svg'; import { useFocusEffect } from '@react-navigation/native'; type Event = { id: number; name: string; description: string;
+import QRCode from 'react-native-qrcode-svg';
+import { useFocusEffect } from '@react-navigation/native';
+type Event = {
+  id: number;
+  name: string;
+  description: string;
   location: string;
   time: string;
   max_users: number;
   registered_users: number;
   password: string;
 };
+import { theme } from '@/shared/hooks/useAppTheme';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function QRGenerator() {
-
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,19 +33,22 @@ export default function QRGenerator() {
   useFocusEffect(
     React.useCallback(() => {
       let isMounted = true;
-      
+
       const fetchEvents = async () => {
         if (!isMounted) return;
-        
+
         setLoading(true);
         setError('');
-        
+
         try {
-          const response = await fetch('http://192.168.107.164:8000/api/event/user/1', {
-            headers: {
-              user_id: '2', // User ID for fetching events
+          const response = await fetch(
+            'http://192.168.107.164:8000/api/event/user/1',
+            {
+              headers: {
+                user_id: '2', // User ID for fetching events
+              },
             },
-          });
+          );
 
           if (!response.ok) {
             throw new Error('Failed to fetch events');
@@ -44,7 +59,9 @@ export default function QRGenerator() {
             setEvents(data);
             // Keep selected event if it still exists in fetched data
             if (selectedEvent) {
-                const stillExists: Event | undefined = data.find((e: Event) => e.id === selectedEvent.id);
+              const stillExists: Event | undefined = data.find(
+                (e: Event) => e.id === selectedEvent.id,
+              );
               if (!stillExists) {
                 setSelectedEvent(null);
               }
@@ -67,8 +84,37 @@ export default function QRGenerator() {
       return () => {
         isMounted = false;
       };
-    }, [selectedEvent]) // Include selectedEvent to properly handle updates
+    }, [selectedEvent]), // Include selectedEvent to properly handle updates
   );
+
+  const deleteEvent = async (eventId: number) => {
+    try {
+      const response = await fetch(
+        `http://192.168.107.164:8000/api/event/${eventId}?user_id=1`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete event');
+      }
+
+      // Remove the deleted event from the state
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.id !== eventId),
+      );
+      if (selectedEvent?.id === eventId) {
+        setSelectedEvent(null); // Deselect the event if it was selected
+      }
+    } catch (err) {
+      console.error('Error deleting event:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    }
+  };
 
   // Get QR code value from event data
   const getQRValue = () => {
@@ -97,14 +143,11 @@ export default function QRGenerator() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Event QR Code</Text>
-      
+
       {selectedEvent ? (
         <>
           <RNView style={styles.qrcontainer}>
-            <QRCode 
-              value={getQRValue()}
-              size={200}
-            />
+            <QRCode value={getQRValue()} size={200} />
           </RNView>
           <Text style={styles.eventName}>{selectedEvent.name}</Text>
           <Text style={styles.eventDetails}>
@@ -112,11 +155,13 @@ export default function QRGenerator() {
           </Text>
         </>
       ) : (
-        <Text style={styles.instructions}>Select an event below to generate its QR code</Text>
+        <Text style={styles.instructions}>
+          Select an event below to generate its QR code
+        </Text>
       )}
-      
+
       <Text style={styles.sectionTitle}>Your Events</Text>
-      
+
       <ScrollView style={styles.eventsList}>
         {events.length > 0 ? (
           events.map((event) => (
@@ -125,16 +170,33 @@ export default function QRGenerator() {
               onPress={() => setSelectedEvent(event)}
               style={[
                 styles.cardWrapper,
-                selectedEvent?.id === event.id && styles.selectedCard
+                selectedEvent?.id === event.id && styles.selectedCard,
               ]}
             >
               <Card style={styles.card}>
                 <Card.Content>
-                  <Title>{event.name}</Title>
+                  <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', backgroundColor: "#f8f3f9" }}>
+                    <Title>{event.name}</Title>
+                    <Button
+                    mode="contained"
+                    style={styles.button}
+                    onPress={() => {
+                      deleteEvent(event.id);
+                    }}
+                  >
+                    <FontAwesome
+                      name="trash-o"
+                      size={20}
+                      color="white"
+                    />
+                  </Button>
+                  </View>
+                  
                   <Paragraph numberOfLines={2}>{event.description}</Paragraph>
                   <Paragraph>
                     👥 {event.registered_users}/{event.max_users} participants
                   </Paragraph>
+                  
                 </Card.Content>
               </Card>
             </TouchableOpacity>
@@ -161,7 +223,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 25,
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -235,7 +297,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    width: '100%',
-    paddingVertical: 6,
-  }
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    width: 10,
+  },
 });
