@@ -42,7 +42,7 @@ export default function QRGenerator() {
 
         try {
           const response = await fetch(
-            'http://192.168.107.164:8000/api/event/user/1',
+            'http://172.20.10.6:8000/api/event/user/1',
             {
               headers: {
                 user_id: '2', // User ID for fetching events
@@ -90,7 +90,7 @@ export default function QRGenerator() {
   const deleteEvent = async (eventId: number) => {
     try {
       const response = await fetch(
-        `http://192.168.107.164:8000/api/event/${eventId}?user_id=1`,
+        `http://172.20.10.6:8000/api/event/${eventId}?user_id=1`,
         {
           method: 'DELETE',
           headers: {
@@ -191,12 +191,12 @@ export default function QRGenerator() {
                     />
                   </Button>
                   </View>
-                  
+
                   <Paragraph numberOfLines={2}>{event.description}</Paragraph>
                   <Paragraph>
                     👥 {event.registered_users}/{event.max_users} participants
                   </Paragraph>
-                  
+
                 </Card.Content>
               </Card>
             </TouchableOpacity>

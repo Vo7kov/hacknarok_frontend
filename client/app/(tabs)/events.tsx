@@ -46,11 +46,11 @@ const CreateEventForm = () => {
     setSuccess(false);
 
     try {
-      const response = await fetch('http://192.168.107.164:8000/api/event/create?user_id=1', {
+      const response = await fetch('http://172.20.10.6:8000/api/event/create?user_id=1', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          user_id: '1', 
+          user_id: '1',
         },
         body: JSON.stringify({
           name: formData.name,
@@ -168,7 +168,7 @@ const EventList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  
+
   useFocusEffect(
     React.useCallback(() => {
       let isMounted = true;
@@ -178,7 +178,7 @@ const EventList = () => {
         setError('');
 
         try {
-          const response = await fetch('http://192.168.107.164:8000/api/event/user/2', {
+          const response = await fetch('http://172.20.10.6:8000/api/event/user/2', {
             headers: {
               user_id: '2', // User ID for fetching events
             },
