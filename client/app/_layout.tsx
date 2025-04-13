@@ -68,7 +68,7 @@ function RootLayoutNav() {
 
     try {
       const parsedData = JSON.parse(data); // Assuming `data` is a JSON string containing event details
-      const response = await fetch('http://192.168.107.164:8000/api/event/join?user=2', {
+      const response = await fetch('http://192.168.107.164:8000/api/event/join?user_id=2', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
