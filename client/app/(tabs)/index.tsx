@@ -13,7 +13,7 @@ const RoleSelectionScreen = () => {
 
   const handleContinue = () => {
     if (userRole) {
-      // Navigate to the appropriate screen based on role
+      
       if (userRole === 'admin') {
         console.log('Admin role selected');
       } else {
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   selectedCard: {
-    borderColor: theme.colors.accent,
+    borderColor: theme.colors.primary,
   },
   card: {
     width: '100%',

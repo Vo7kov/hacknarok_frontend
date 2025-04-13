@@ -67,15 +67,15 @@ function RootLayoutNav() {
     setQrData(data);
 
     try {
-      const parsedData = JSON.parse(data); // Assuming `data` is a JSON string containing event details
+      const parsedData = JSON.parse(data); 
       const response = await fetch('http://192.168.107.164:8000/api/event/join?user_id=2', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          user_id: '2', // Replace with dynamic user_id if needed
+          user_id: '2', 
         },
         body: JSON.stringify({
-          event_id: parsedData.id, // Extract event_id from the scanned QR code data
+          event_id: parsedData.id,
         }),
       });
 

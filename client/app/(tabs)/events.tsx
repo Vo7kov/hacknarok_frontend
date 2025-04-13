@@ -23,11 +23,10 @@ type Event = {
   max_users: number;
   registered_users: number;
   password: string;
-  aiMessage?: string; // Add optional field for AI message
+  aiMessage?: string;
   loadingAi?: boolean;
 };
 
-// CreateEvent form component
 const CreateEventForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -71,7 +70,6 @@ const CreateEventForm = () => {
       }
 
       setSuccess(true);
-      // Reset form
       setFormData({
         name: '',
         description: '',
@@ -98,7 +96,6 @@ const CreateEventForm = () => {
           style={styles.input}
           mode="outlined"
         />
-
         <TextInput
           label="Description"
           value={formData.description}
@@ -110,7 +107,6 @@ const CreateEventForm = () => {
           numberOfLines={3}
           mode="outlined"
         />
-
         <TextInput
           label="Location"
           value={formData.location}
@@ -118,7 +114,6 @@ const CreateEventForm = () => {
           style={styles.input}
           mode="outlined"
         />
-
         <TextInput
           label="Time (YYYY-MM-DD HH:MM)"
           value={formData.time}
@@ -126,7 +121,6 @@ const CreateEventForm = () => {
           style={styles.input}
           mode="outlined"
         />
-
         <TextInput
           label="Maximum Users"
           value={formData.max_users}
@@ -135,7 +129,6 @@ const CreateEventForm = () => {
           style={styles.input}
           mode="outlined"
         />
-
         <TextInput
           label="Password"
           value={formData.password}
@@ -144,12 +137,10 @@ const CreateEventForm = () => {
           secureTextEntry
           mode="outlined"
         />
-
         {error ? <HelperText type="error">{error}</HelperText> : null}
         {success ? (
           <HelperText type="info">Event created successfully!</HelperText>
         ) : null}
-
         <Button
           mode="contained"
           onPress={handleSubmit}
@@ -166,7 +157,6 @@ const CreateEventForm = () => {
   );
 };
 
-// EventList component
 const EventList = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -185,7 +175,7 @@ const EventList = () => {
             'http://172.20.10.6:8000/api/event/user/2',
             {
               headers: {
-                user_id: '2', // User ID for fetching events
+                user_id: '2',
               },
             },
           );
@@ -214,11 +204,10 @@ const EventList = () => {
       return () => {
         isMounted = false;
       };
-    }, []), // Empty dependency array ensures this runs only when the screen is focused
+    }, []),
   );
 
   const fetchAiMessage = async (eventId: number) => {
-    // Set loading state for the specific card
     setEvents((currentEvents) =>
       currentEvents.map((event) =>
         event.id === eventId
@@ -230,7 +219,7 @@ const EventList = () => {
     try {
       const response = await fetch(
         `http://172.20.10.6:8000/api/event/ai/${eventId}`,
-      ); // Ensure correct IP/URL
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch AI message');
       }
