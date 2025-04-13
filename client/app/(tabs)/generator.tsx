@@ -42,7 +42,7 @@ export default function QRGenerator() {
 
         try {
           const response = await fetch(
-            'http://172.20.10.6:8000/api/event/user/1',
+            `http://${process.env.EXPO_PUBLIC_API_URL}/api/event/user/1`,
             {
               headers: {
                 user_id: '2', // User ID for fetching events
@@ -90,7 +90,7 @@ export default function QRGenerator() {
   const deleteEvent = async (eventId: number) => {
     try {
       const response = await fetch(
-        `http://172.20.10.6:8000/api/event/${eventId}?user_id=1`,
+        `http://${process.env.EXPO_PUBLIC_API_URL}/api/event/${eventId}?user_id=1`,
         {
           method: 'DELETE',
           headers: {
@@ -175,28 +175,31 @@ export default function QRGenerator() {
             >
               <Card style={styles.card}>
                 <Card.Content>
-                  <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', backgroundColor: "#f8f3f9" }}>
-                    <Title>{event.name}</Title>
-                    <Button
-                    mode="contained"
-                    style={styles.button}
-                    onPress={() => {
-                      deleteEvent(event.id);
+                  <View
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: '#f8f3f9',
                     }}
                   >
-                    <FontAwesome
-                      name="trash-o"
-                      size={20}
-                      color="white"
-                    />
-                  </Button>
+                    <Title>{event.name}</Title>
+                    <Button
+                      mode="contained"
+                      style={styles.button}
+                      onPress={() => {
+                        deleteEvent(event.id);
+                      }}
+                    >
+                      <FontAwesome name="trash-o" size={20} color="white" />
+                    </Button>
                   </View>
 
                   <Paragraph numberOfLines={2}>{event.description}</Paragraph>
                   <Paragraph>
                     👥 {event.registered_users}/{event.max_users} participants
                   </Paragraph>
-
                 </Card.Content>
               </Card>
             </TouchableOpacity>

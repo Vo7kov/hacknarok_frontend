@@ -48,7 +48,7 @@ const CreateEventForm = () => {
 
     try {
       const response = await fetch(
-        'http://172.20.10.6:8000/api/event/create?user_id=1',
+        `http://${process.env.EXPO_PUBLIC_API_URL}/api/event/create?user_id=1`,
         {
           method: 'POST',
           headers: {
@@ -182,7 +182,7 @@ const EventList = () => {
 
         try {
           const response = await fetch(
-            'http://172.20.10.6:8000/api/event/user/2',
+            `http://${process.env.EXPO_PUBLIC_API_URL}/api/event/user/2`,
             {
               headers: {
                 user_id: '2', // User ID for fetching events
@@ -229,7 +229,7 @@ const EventList = () => {
 
     try {
       const response = await fetch(
-        `http://172.20.10.6:8000/api/event/ai/${eventId}`,
+        `http://${process.env.EXPO_PUBLIC_API_URL}/api/event/ai/${eventId}`,
       ); // Ensure correct IP/URL
       if (!response.ok) {
         throw new Error('Failed to fetch AI message');
