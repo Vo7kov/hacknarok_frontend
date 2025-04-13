@@ -3,14 +3,7 @@ import { StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, View as RN
 import { Text, View } from '@/shared/ui/Themed';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { useUserRole } from '@/shared/context/UserRoleContext';
-import QRCode from 'react-native-qrcode-svg';
-import { useFocusEffect } from '@react-navigation/native';
-
-
-type Event = {
-  id: number;
-  name: string;
-  description: string;
+import QRCode from 'react-native-qrcode-svg'; import { useFocusEffect } from '@react-navigation/native'; type Event = { id: number; name: string; description: string;
   location: string;
   time: string;
   max_users: number;

@@ -62,9 +62,31 @@ function RootLayoutNav() {
   const { cameraActive } = useCameraContext();
   const [qrData, setQrData] = useState<string | null>(null);
 
-  const onBarcodeScanned = ({ data }: { data: string }) => {
+  const onBarcodeScanned = async ({ data }: { data: string }) => {
     console.log(data);
     setQrData(data);
+
+    try {
+      const parsedData = JSON.parse(data); // Assuming `data` is a JSON string containing event details
+      const response = await fetch('http://192.168.107.164:8000/api/event/join?user=2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          user_id: '2', // Replace with dynamic user_id if needed
+        },
+        body: JSON.stringify({
+          event_id: parsedData.id, // Extract event_id from the scanned QR code data
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to join event');
+      }
+
+      console.log('Successfully joined event:', parsedData.id);
+    } catch (error) {
+      console.error('Error joining event:', error);
+    }
   };
 
   return (
