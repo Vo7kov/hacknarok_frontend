@@ -4,6 +4,8 @@ import { Text, View } from '@/shared/ui/Themed';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { useUserRole } from '@/shared/context/UserRoleContext';
 import QRCode from 'react-native-qrcode-svg';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 type Event = {
   id: number;
@@ -17,37 +19,63 @@ type Event = {
 };
 
 export default function QRGenerator() {
-  const { userRole } = useUserRole();
 
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('http://172.20.10.6:8000/api/event/user/1', {
-          headers: {
-            user_id: '2', // User ID for fetching events
-          },
-        });
+  useFocusEffect(
+    React.useCallback(() => {
+      let isMounted = true;
+      
+      const fetchEvents = async () => {
+        if (!isMounted) return;
+        
+        setLoading(true);
+        setError('');
+        
+        try {
+          const response = await fetch('http://192.168.107.164:8000/api/event/user/1', {
+            headers: {
+              user_id: '2', // User ID for fetching events
+            },
+          });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
+          if (!response.ok) {
+            throw new Error('Failed to fetch events');
+          }
+
+          const data = await response.json();
+          if (isMounted) {
+            setEvents(data);
+            // Keep selected event if it still exists in fetched data
+            if (selectedEvent) {
+                const stillExists: Event | undefined = data.find((e: Event) => e.id === selectedEvent.id);
+              if (!stillExists) {
+                setSelectedEvent(null);
+              }
+            }
+          }
+        } catch (err) {
+          if (isMounted) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+          }
+        } finally {
+          if (isMounted) {
+            setLoading(false);
+          }
         }
+      };
 
-        const data = await response.json();
-        setEvents(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
+      fetchEvents();
 
-    fetchEvents();
-  }, []);
+      // Cleanup function
+      return () => {
+        isMounted = false;
+      };
+    }, [selectedEvent]) // Include selectedEvent to properly handle updates
+  );
 
   // Get QR code value from event data
   const getQRValue = () => {
@@ -180,7 +208,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedCard: {
-    borderColor: '#2196F3',
+    borderColor: '#6200ee',
   },
   card: {
     width: '100%',

@@ -13,6 +13,8 @@ import {
 import { useUserRole } from '@/shared/context/UserRoleContext';
 import { theme } from '@/shared/hooks/useAppTheme';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 type Event = {
   id: number;
   name: string;
@@ -44,7 +46,7 @@ const CreateEventForm = () => {
     setSuccess(false);
 
     try {
-      const response = await fetch('http://172.20.10.6:8000/api/event/create?user_id=1', {
+      const response = await fetch('http://192.168.107.164:8000/api/event/create?user_id=1', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,30 +168,48 @@ const EventList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('http://172.20.10.6:8000/api/event/user/2', {
-          headers: {
-            user_id: '2', // User ID for fetching events
-          },
-        });
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      let isMounted = true;
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
+      const fetchEvents = async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+          const response = await fetch('http://192.168.107.164:8000/api/event/user/2', {
+            headers: {
+              user_id: '2', // User ID for fetching events
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch events');
+          }
+
+          const data = await response.json();
+          if (isMounted) {
+            setEvents(data);
+          }
+        } catch (err) {
+          if (isMounted) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+          }
+        } finally {
+          if (isMounted) {
+            setLoading(false);
+          }
         }
+      };
 
-        const data = await response.json();
-        setEvents(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
+      fetchEvents();
 
-    fetchEvents();
-  }, []);
+      return () => {
+        isMounted = false;
+      };
+    }, []) // Empty dependency array ensures this runs only when the screen is focused
+  );
 
   if (loading) {
     return (
